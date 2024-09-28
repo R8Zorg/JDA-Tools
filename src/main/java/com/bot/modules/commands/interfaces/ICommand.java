@@ -1,4 +1,4 @@
-package com.bot.modules.commands;
+package com.bot.modules.commands.interfaces;
 
 import com.bot.modules.commands.annotations.Command;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
