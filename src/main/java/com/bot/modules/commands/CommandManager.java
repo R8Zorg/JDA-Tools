@@ -1,5 +1,7 @@
 package com.bot.modules.commands;
 
+import com.bot.modules.commands.annotations.Command;
+import com.bot.modules.commands.annotations.Subcommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
