@@ -1,7 +1,8 @@
 package com.bot.modules.commands;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,20 +10,59 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class CommandManager {
-    private final Map<String, ICommand> commands = new HashMap<>();
+    private final Map<String, ICommand> COMMANDS = new HashMap<>(); // ICommand?
+    private final Map<String, Map<String, ISubcommand>> SUBCOMMANDS = new HashMap<>();
     final static Logger logger = LoggerFactory.getLogger(CommandManager.class);
 
     public CommandManager() {
         registerAllCommands();
     }
 
+//    private void registerAllCommands() {
+//        Reflections reflections = new Reflections("com.bot.modules.commands");
+//        Set<Class<?>> commandClasses = reflections.getTypesAnnotatedWith(SlashCommand.class);
+//        for (Class<?> commandClass : commandClasses) {
+//            SlashCommand commandAnnotation = commandClass.getAnnotation(SlashCommand.class);
+//            SlashCommandData commandData = Commands.slash(commandAnnotation.name(), commandAnnotation.description());
+//
+//            for (Class<?> innerClass : commandClass.getDeclaredClasses()) {
+//                if (innerClass.isAnnotationPresent(Subcommand.class)) {
+//                    Subcommand subcommandAnnotation = innerClass.getAnnotation(Subcommand.class);
+//                    SubcommandData subcommandData =
+//                            new SubcommandData(subcommandAnnotation.name(), subcommandAnnotation.description());
+//                    commandData.addSubcommands(subcommandData);
+//                }
+//            }
+//            COMMANDS.put(commandAnnotation.name(), commandData);
+//        }
+//    }
+
     private void registerAllCommands() {
         Reflections reflections = new Reflections("com.bot.modules.commands");
         Set<Class<? extends ICommand>> commandClasses = reflections.getSubTypesOf(ICommand.class);
+
         for (Class<? extends ICommand> commandClass : commandClasses) {
             try {
                 ICommand commandInstance = commandClass.getDeclaredConstructor().newInstance();
-                commands.put(commandInstance.getName(), commandInstance);
+                Command commandAnnotation = commandClass.getAnnotation(Command.class);
+                if (commandAnnotation == null) {
+                    continue;
+                }
+                COMMANDS.put(commandAnnotation.name(), commandInstance);
+
+                Class<?>[] nestedClasses = commandClass.getDeclaredClasses();
+                Map<String, ISubcommand> subcommandMap = new HashMap<>();
+                for (Class<?> nestedClass : nestedClasses) {
+                    if (nestedClass.isAnnotationPresent(Subcommand.class)) {
+                        Subcommand subcommand = nestedClass.getAnnotation(Subcommand.class);
+                        ISubcommand subcommandInstance = (ISubcommand) nestedClass.getDeclaredConstructor().newInstance();
+                        subcommandMap.put(subcommand.name(), subcommandInstance);
+                    }
+                }
+                if (subcommandMap.isEmpty()) {
+                    continue;
+                }
+                SUBCOMMANDS.put(commandAnnotation.name(), subcommandMap);
             } catch (Exception e) {
                 logger.error(e.getMessage());
             }
@@ -30,22 +70,40 @@ public class CommandManager {
     }
 
     public void handleCommand(SlashCommandInteractionEvent event) {
-        ICommand command = commands.get(event.getName());
+        ICommand command = COMMANDS.get(event.getName());
+        Map<String, ISubcommand> subcommandMap = SUBCOMMANDS.get(event.getName());
 
-        if (command != null) {
+        if (subcommandMap != null) {
+            ISubcommand subcommand = subcommandMap.get(event.getSubcommandName());
+            subcommand.execute(event);
+        } else if (command != null) {
             command.execute(event);
         } else {
             event.reply("Unknown command").queue();
         }
     }
 
-    public List<CommandData> getSlashCommandData() {
-        List<CommandData> commandDataList = new ArrayList<>();
+    public List<SlashCommandData> getSlashCommandData() {
+        List<SlashCommandData> slashCommandDataList = new ArrayList<>();
+        for (Map.Entry<String, ICommand> commandEntry : COMMANDS.entrySet()) {
+            String commandName = commandEntry.getKey();
+            ICommand command = commandEntry.getValue();
+            if (SUBCOMMANDS.containsKey(commandName)) {
+                List<SubcommandData> subcommandDataList = new ArrayList<>();;
 
-        for (ICommand command : commands.values()) {
-            commandDataList.add(command.buildCommand());
+                for (Map.Entry<String, Map<String, ISubcommand>> entry : SUBCOMMANDS.entrySet()) {
+                    Map<String, ISubcommand> subcommands = entry.getValue();
+                    for (Map.Entry<String, ISubcommand> subcommandEntry : subcommands.entrySet()) {
+                        ISubcommand subcommand = subcommandEntry.getValue();
+                        subcommandDataList.add(subcommand.buildCommand());
+                    }
+                }
+                slashCommandDataList.add(command.buildCommand().addSubcommands(subcommandDataList));
+            } else {
+                slashCommandDataList.add(command.buildCommand());
+            }
         }
-        return commandDataList;
+        return slashCommandDataList;
     }
 
 }

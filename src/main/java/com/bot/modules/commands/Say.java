@@ -6,17 +6,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.util.Objects;
 
+@Command(name = "say", description = "Send message on behalf of a bot")
 public class Say implements ICommand {
-
-    @Override
-    public String getName() {
-        return "say";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Send message from behalf of the bot";
-    }
 
     @Override
     public SlashCommandData buildCommand() {

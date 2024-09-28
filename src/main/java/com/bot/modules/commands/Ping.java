@@ -2,17 +2,8 @@ package com.bot.modules.commands;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+@Command(name = "ping", description = "Check if bot is alive")
 public class Ping implements ICommand {
-
-    @Override
-    public String getName() {
-        return "ping";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Check if bot is alive";
-    }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
