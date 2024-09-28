@@ -20,25 +20,6 @@ public class CommandManager {
         registerAllCommands();
     }
 
-//    private void registerAllCommands() {
-//        Reflections reflections = new Reflections("com.bot.modules.commands");
-//        Set<Class<?>> commandClasses = reflections.getTypesAnnotatedWith(SlashCommand.class);
-//        for (Class<?> commandClass : commandClasses) {
-//            SlashCommand commandAnnotation = commandClass.getAnnotation(SlashCommand.class);
-//            SlashCommandData commandData = Commands.slash(commandAnnotation.name(), commandAnnotation.description());
-//
-//            for (Class<?> innerClass : commandClass.getDeclaredClasses()) {
-//                if (innerClass.isAnnotationPresent(Subcommand.class)) {
-//                    Subcommand subcommandAnnotation = innerClass.getAnnotation(Subcommand.class);
-//                    SubcommandData subcommandData =
-//                            new SubcommandData(subcommandAnnotation.name(), subcommandAnnotation.description());
-//                    commandData.addSubcommands(subcommandData);
-//                }
-//            }
-//            COMMANDS.put(commandAnnotation.name(), commandData);
-//        }
-//    }
-
     private void registerAllCommands() {
         Reflections reflections = new Reflections("com.bot.modules.commands");
         Set<Class<? extends ICommand>> commandClasses = reflections.getSubTypesOf(ICommand.class);
