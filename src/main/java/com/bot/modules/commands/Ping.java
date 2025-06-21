@@ -2,6 +2,7 @@ package com.bot.modules.commands;
 
 import com.bot.modules.commands.annotations.Command;
 import com.bot.modules.commands.interfaces.ICommand;
+
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 @Command(name = "ping", description = "Check if bot is alive")

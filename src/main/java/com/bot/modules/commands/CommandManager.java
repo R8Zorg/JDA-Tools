@@ -1,20 +1,26 @@
 package com.bot.modules.commands;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.bot.modules.commands.annotations.Command;
 import com.bot.modules.commands.annotations.Subcommand;
 import com.bot.modules.commands.interfaces.ICommand;
 import com.bot.modules.commands.interfaces.ISubcommand;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 public class CommandManager {
-    private final Map<String, ICommand> COMMANDS = new HashMap<>(); // ICommand?
+    private final Map<String, ICommand> COMMANDS = new HashMap<>();
     private final Map<String, Map<String, ISubcommand>> SUBCOMMANDS = new HashMap<>();
     final static Logger logger = LoggerFactory.getLogger(CommandManager.class);
 
@@ -74,7 +80,7 @@ public class CommandManager {
             String commandName = commandEntry.getKey();
             ICommand command = commandEntry.getValue();
             if (SUBCOMMANDS.containsKey(commandName)) {
-                List<SubcommandData> subcommandDataList = new ArrayList<>();;
+                List<SubcommandData> subcommandDataList = new ArrayList<>();
 
                 for (Map.Entry<String, Map<String, ISubcommand>> entry : SUBCOMMANDS.entrySet()) {
                     Map<String, ISubcommand> subcommands = entry.getValue();

@@ -1,12 +1,13 @@
 package com.bot.modules.commands;
 
+import java.util.Objects;
+
 import com.bot.modules.commands.annotations.Command;
 import com.bot.modules.commands.interfaces.ICommand;
+
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-
-import java.util.Objects;
 
 @Command(name = "say", description = "Send message on behalf of a bot")
 public class Say implements ICommand {

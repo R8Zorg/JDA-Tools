@@ -1,20 +1,22 @@
 package com.bot;
 
-import io.github.cdimascio.dotenv.Dotenv;
+import java.util.EnumSet;
+import java.util.Set;
+
 import com.bot.modules.commands.CommandManager;
 import com.bot.modules.listeners.IEventListener;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.requests.GatewayIntent;
+
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.EnumSet;
-import java.util.Set;
+import io.github.cdimascio.dotenv.Dotenv;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class Main {
     final static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -25,7 +27,7 @@ public class Main {
         CommandManager commandManager = new CommandManager();
         EnumSet<GatewayIntent> gatewayIntents = EnumSet.of(
                 GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES,
-                GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
+                GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_EXPRESSIONS,
                 GatewayIntent.SCHEDULED_EVENTS);
 
         JDA jda = JDABuilder.createDefault(dotenv.get("TOKEN"), gatewayIntents)
