@@ -80,15 +80,13 @@ public class CommandManager {
             String commandName = commandEntry.getKey();
             ICommand command = commandEntry.getValue();
             if (SUBCOMMANDS.containsKey(commandName)) {
+                Map<String, ISubcommand> subcommands = SUBCOMMANDS.get(commandName);
                 List<SubcommandData> subcommandDataList = new ArrayList<>();
-
-                for (Map.Entry<String, Map<String, ISubcommand>> entry : SUBCOMMANDS.entrySet()) {
-                    Map<String, ISubcommand> subcommands = entry.getValue();
-                    for (Map.Entry<String, ISubcommand> subcommandEntry : subcommands.entrySet()) {
-                        ISubcommand subcommand = subcommandEntry.getValue();
-                        subcommandDataList.add(subcommand.buildCommand());
-                    }
+                for (Map.Entry<String, ISubcommand> subcommandEntry : subcommands.entrySet()) {
+                    ISubcommand subcommand = subcommandEntry.getValue();
+                    subcommandDataList.add(subcommand.buildCommand());
                 }
+
                 slashCommandDataList.add(command.buildCommand().addSubcommands(subcommandDataList));
             } else {
                 slashCommandDataList.add(command.buildCommand());
