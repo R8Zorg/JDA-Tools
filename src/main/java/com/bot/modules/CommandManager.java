@@ -44,7 +44,7 @@ public class CommandManager {
             return method;
         }
     }
-    // Map<"full command name", Method>
+    // Map<"full command name", CommandExecutor>
     private final Map<String, CommandExecutor> COMMANDS = new HashMap<>();
     private final List<SlashCommandData> COMMANDSDATA = new ArrayList<>();
     final static Logger logger = LoggerFactory.getLogger(CommandManager.class);
