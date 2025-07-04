@@ -1,10 +1,14 @@
-package com.bot.modules.commands.annotations;
+package com.bot.modules.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Command {
     String name();
     String description();
+    InteractionContextType type() default InteractionContextType.GUILD;
 }
+

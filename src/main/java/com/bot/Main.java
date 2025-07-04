@@ -1,21 +1,15 @@
 package com.bot;
 
 import java.util.EnumSet;
-import java.util.Set;
 
-import com.bot.modules.commands.CommandManager;
-import com.bot.modules.listeners.IEventListener;
+import com.bot.modules.CommandManager;
 
-import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class Main {
@@ -25,45 +19,20 @@ public class Main {
         Dotenv dotenv = Dotenv.load();
 
         CommandManager commandManager = new CommandManager();
+        ListenersRegistrar listenersRegistrar = new ListenersRegistrar();
+
         EnumSet<GatewayIntent> gatewayIntents = EnumSet.of(
                 GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES,
                 GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_EXPRESSIONS,
                 GatewayIntent.SCHEDULED_EVENTS);
 
         JDA jda = JDABuilder.createDefault(dotenv.get("TOKEN"), gatewayIntents)
-                .addEventListeners(new Listener(commandManager))
+                .addEventListeners(new SlashCommandsHandler(commandManager))
                 .build();
         jda.updateCommands().addCommands(commandManager.getSlashCommandData()).queue();
         jda.awaitReady();
-        RegisterAllListeners(jda);
+        listenersRegistrar.RegisterAllListeners(jda, "com.bot.modules.listeners");
+
         logger.info("Bot {} started", jda.getSelfUser().getName());
     }
-
-    private static class Listener extends ListenerAdapter {
-        private final CommandManager commandManager;
-
-        public Listener(CommandManager commandManager) {
-            this.commandManager = commandManager;
-        }
-
-        @Override
-        public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-            commandManager.handleCommand(event);
-        }
-    }
-
-    private static void RegisterAllListeners(JDA jda) {
-        Reflections reflections = new Reflections("com.bot.modules.listeners");
-        Set<Class<? extends IEventListener>> listenerClasses = reflections.getSubTypesOf(IEventListener.class);
-
-        for (Class<? extends IEventListener> listenerClass : listenerClasses) {
-            try {
-                IEventListener listenerInstance = listenerClass.getDeclaredConstructor().newInstance();
-                jda.addEventListener(listenerInstance);
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-            }
-        }
-    }
-
 }

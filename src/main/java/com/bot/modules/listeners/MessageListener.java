@@ -1,5 +1,7 @@
 package com.bot.modules.listeners;
 
+import com.bot.modules.annotations.EventListeners;
+
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +9,8 @@ import org.slf4j.LoggerFactory;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class MessageListener extends ListenerAdapter implements IEventListener {
+@EventListeners
+public class MessageListener extends ListenerAdapter {
     final static Logger logger = LoggerFactory.getLogger(MessageListener.class);
 
     @Override

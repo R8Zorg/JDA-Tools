@@ -1,10 +1,12 @@
-package com.bot.modules.commands.annotations;
+package com.bot.modules.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SubcommandGroup {
+public @interface Subcommand {
+    String parent();
     String name();
     String description();
 }
+
