@@ -1,7 +1,6 @@
 package com.bot.modules;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -169,24 +167,6 @@ public class CommandManager {
                 }
             }
         }
-    }
-
-    private static SlashCommandData buildSlashCommand(String commandName, String description,
-            InteractionContextType type, Method method) {
-        SlashCommandData data = Commands.slash(commandName, description).setContexts(type);
-
-        Parameter[] params = method.getParameters();
-        Annotation[][] annotations = method.getParameterAnnotations();
-
-        for (int i = 0; i < params.length; i++) {
-            for (Annotation a : annotations[i]) {
-                if (a instanceof Option opt) {
-                    OptionType optType = mapType(params[i].getType());
-                    data.addOption(optType, opt.name(), opt.description(), opt.required());
-                }
-            }
-        }
-        return data;
     }
 
     public void handleCommand(SlashCommandInteractionEvent event) {
