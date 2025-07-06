@@ -13,4 +13,3 @@ public class Ping {
         event.reply("Pong!").queue();
     }
 }
-

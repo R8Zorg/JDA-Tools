@@ -7,8 +7,9 @@ import net.dv8tion.jda.api.interactions.InteractionContextType;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Command {
-    String name();
-    String description();
+    String name() default "";
+    String description() default "Description not provided.";
     InteractionContextType type() default InteractionContextType.GUILD;
+    int order() default 1;
 }
 
