@@ -21,7 +21,8 @@ public class GuildInfo {
         event.reply("Ping, hehe").queue();
     }
 
-    @SubcommandGroup(parentName = "guild") public void get(SlashCommandInteractionEvent event) {
+    @SubcommandGroup(parentName = "guild")
+    public void get(SlashCommandInteractionEvent event) {
     }
 
     @SubcommandGroup(parentName = "guild")
