@@ -1,6 +1,6 @@
 package com.bot.modules.listeners;
 
-import com.bot.modules.annotations.EventListeners;
+import com.bot.core.annotations.EventListeners;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
