@@ -93,7 +93,7 @@ public class CommandManager {
                     } else if (method.isAnnotationPresent(SubcommandGroup.class)) {
                         SubcommandGroup subcommandGroup = method.getAnnotation(SubcommandGroup.class);
 
-                        String parentName = subcommandGroup.parentNames();
+                        String parentName = subcommandGroup.parentName();
                         String subcommandGroupName = subcommandGroup.name().isEmpty() ? method.getName()
                                 : subcommandGroup.name();
                         String fullCommandName = parentName + " " + subcommandGroupName;

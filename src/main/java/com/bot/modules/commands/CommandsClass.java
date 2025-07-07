@@ -27,15 +27,13 @@ public class CommandsClass {
 
     @Command(description = "Get guild's owner")
     public void guild(SlashCommandInteractionEvent event) {
-        event.reply("You can't use this part of command").queue();
     }
 
-    @SubcommandGroup(parentNames = "guild")
+    @SubcommandGroup(parentName = "guild")
     public void get(SlashCommandInteractionEvent event) {
-        event.reply("You can't use this part of command").queue();
     }
 
-    @SubcommandGroup(parentNames = "guild")
+    @SubcommandGroup(parentName = "guild")
     public void add(SlashCommandInteractionEvent event) {
         event.reply("You can't use this part of command").queue();
     }
