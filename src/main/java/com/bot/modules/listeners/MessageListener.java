@@ -2,7 +2,6 @@ package com.bot.modules.listeners;
 
 import com.bot.core.annotations.EventListeners;
 
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +13,7 @@ public class MessageListener extends ListenerAdapter {
     final static Logger logger = LoggerFactory.getLogger(MessageListener.class);
 
     @Override
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+    public void onMessageReceived(MessageReceivedEvent event) {
         String message = event.getMessage().getContentRaw();
         logger.info("{} wrote: {}", event.getAuthor().getName(), message);
     }
