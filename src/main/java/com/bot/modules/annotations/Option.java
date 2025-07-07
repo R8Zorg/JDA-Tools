@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 @Target(ElementType.PARAMETER)
 public @interface Option {
     String name() default "";
-    String description() default "";
+    String description() default "Description not provided.";
     boolean required() default true;
     OptionType type() default OptionType.STRING;
 }
