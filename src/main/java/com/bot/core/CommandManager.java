@@ -80,7 +80,6 @@ public class CommandManager {
                 List<Method> methods = Arrays.asList(commandsClass.getDeclaredMethods());
                 methods.sort(Comparator.comparingInt(this::getOrder));
                 for (Method method : methods) {
-                    logger.info("Method name: " + method.getName());
                     if (method.isAnnotationPresent(Command.class)) {
                         Command command = method.getAnnotation(Command.class);
                         String commandName = command.name().isEmpty() ? method.getName() : command.name();
