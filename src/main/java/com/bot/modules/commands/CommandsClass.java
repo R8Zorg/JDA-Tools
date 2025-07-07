@@ -46,7 +46,7 @@ public class CommandsClass {
     @Subcommand(parentNames = "guild add", name = "owner")
     public void add_owner(SlashCommandInteractionEvent event,
             @Option(name = "member", description = "Member to add") Member member,
-    @Option(name = "role") Role role) {
+            @Option(name = "role") Role role) {
         event.reply(member.getAsMention() + " added to this guild owners").setEphemeral(true).queue();
     }
 }
