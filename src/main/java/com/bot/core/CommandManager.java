@@ -118,7 +118,7 @@ public class CommandManager {
                         SubcommandData subcommandData = new SubcommandData(subcommandName, description);
                         addOptions(subcommandData, method);
 
-                        SerializableData parentData = parentNames.length() == 1 ? COMMANDS_DATA.get(parentNames)
+                        SerializableData parentData = parentNames.split(" ").length == 1 ? COMMANDS_DATA.get(parentNames)
                                 : COMMANDGROUPS_DATA.get(parentNames.split(" ")[1]);
                         if (parentData instanceof SlashCommandData slashData) {
                             slashData.addSubcommands(subcommandData);
