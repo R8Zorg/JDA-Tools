@@ -2,7 +2,9 @@ package com.bot;
 
 import java.util.EnumSet;
 
-import com.bot.modules.CommandManager;
+import com.bot.core.CommandManager;
+import com.bot.core.ListenersRegistrar;
+import com.bot.core.SlashCommandsHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +20,8 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         Dotenv dotenv = Dotenv.load();
 
-        CommandManager commandManager = new CommandManager();
-        ListenersRegistrar listenersRegistrar = new ListenersRegistrar();
+        CommandManager commandManager = new CommandManager("com.bot.modules.commands");
+        ListenersRegistrar listenersRegistrar = new ListenersRegistrar("com.bot.modules.listeners");
 
         EnumSet<GatewayIntent> gatewayIntents = EnumSet.of(
                 GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES,
@@ -31,7 +33,7 @@ public class Main {
                 .build();
         jda.updateCommands().addCommands(commandManager.getSlashCommandData()).queue();
         jda.awaitReady();
-        listenersRegistrar.RegisterAllListeners(jda, "com.bot.modules.listeners");
+        listenersRegistrar.RegisterAllListeners(jda);
 
         logger.info("Bot {} started", jda.getSelfUser().getName());
     }
