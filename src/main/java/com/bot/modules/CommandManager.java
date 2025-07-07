@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.bot.modules.TypeOptions.OptionHandler;
 import com.bot.modules.annotations.Command;
 import com.bot.modules.annotations.Option;
 import com.bot.modules.annotations.SlashCommands;
@@ -26,7 +27,6 @@ import io.github.classgraph.ScanResult;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -34,7 +34,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.utils.data.SerializableData;
 
 public class CommandManager {
-
     private class CommandExecutor {
         private final Object instance;
         private final Method method;
@@ -53,7 +52,6 @@ public class CommandManager {
         }
     }
 
-    // Map<"full command name", CommandExecutor>
     private final Map<String, CommandExecutor> COMMANDS = new HashMap<>();
     private final Map<String, SlashCommandData> COMMANDS_DATA = new HashMap<>();
     private final Map<String, SubcommandGroupData> COMMANDGROUPS_DATA = new HashMap<>();
@@ -121,8 +119,6 @@ public class CommandManager {
                         SubcommandData subcommandData = new SubcommandData(subcommandName, description);
                         addOptions(subcommandData, method);
 
-                        // SerializableData parentData = COMMANDS_DATA.get(parentName.split("
-                        // ")[parentName.length() - 1]);
                         SerializableData parentData = parentNames.length() == 1 ? COMMANDS_DATA.get(parentNames)
                                 : COMMANDGROUPS_DATA.get(parentNames.split(" ")[1]);
                         if (parentData instanceof SlashCommandData slashData) {
@@ -152,17 +148,19 @@ public class CommandManager {
     }
 
     private static void addOptions(SerializableData data, Method method) {
-        Parameter[] params = method.getParameters();
-        Annotation[][] annotations = method.getParameterAnnotations();
-
-        for (int i = 0; i < params.length; i++) {
-            for (Annotation a : annotations[i]) {
-                if (a instanceof Option opt) {
-                    OptionType optType = mapType(params[i].getType());
+        for (Parameter parameter : method.getParameters()) {
+            for (Annotation annotation : parameter.getAnnotations()) {
+                if (annotation instanceof Option option) {
+                    OptionHandler optionHandler = TypeOptions.OPTION_HANDLERS.get(parameter.getType());
+                    if (optionHandler == null) {
+                        throw new IllegalArgumentException("Unsupported parameter type: " + parameter.getType());
+                    }
                     if (data instanceof SlashCommandData slashData) {
-                        slashData.addOption(optType, opt.name(), opt.description(), opt.required());
+                        slashData.addOption(optionHandler.optionType(), option.name(), option.description(),
+                                option.required());
                     } else if (data instanceof SubcommandData subData) {
-                        subData.addOption(optType, opt.name(), opt.description(), opt.required());
+                        subData.addOption(optionHandler.optionType(), option.name(), option.description(),
+                                option.required());
                     }
                 }
             }
@@ -178,26 +176,23 @@ public class CommandManager {
             return;
 
         List<Object> args = new ArrayList<>();
-        Parameter[] params = method.getParameters();
+        Parameter[] parameters = method.getParameters();
 
-        for (Parameter param : params) {
-            if (param.getType() == SlashCommandInteractionEvent.class) {
+        for (Parameter parameter : parameters) {
+            if (parameter.getType() == SlashCommandInteractionEvent.class) {
                 args.add(event);
-            } else if (param.isAnnotationPresent(Option.class)) {
-                Option opt = param.getAnnotation(Option.class);
-                OptionMapping mapping = event.getOption(opt.name());
+            } else if (parameter.isAnnotationPresent(Option.class)) {
+                Option option = parameter.getAnnotation(Option.class);
+                OptionMapping optionMapping = event.getOption(option.name());
 
-                if (mapping == null && opt.required())
-                    throw new IllegalArgumentException("Missing required option: " + opt.name());
-
-                Object value = switch (param.getType().getSimpleName()) {
-                    case "String" -> mapping.getAsString();
-                    case "int", "Integer" -> mapping.getAsInt();
-                    case "boolean", "Boolean" -> mapping.getAsBoolean();
-                    default -> throw new IllegalArgumentException("Unsupported parameter type");
-                };
-
-                args.add(value);
+                if (optionMapping == null && option.required()) {
+                    throw new IllegalArgumentException("Missing required option: " + option.name());
+                }
+                OptionHandler optionHandler = TypeOptions.OPTION_HANDLERS.get(parameter.getType());
+                if (optionHandler == null) {
+                    throw new IllegalArgumentException("Unsupported parameter type: " + parameter.getType());
+                }
+                args.add(optionMapping != null ? optionHandler.extractor().extract(optionMapping) : null);
             }
         }
 
@@ -207,14 +202,4 @@ public class CommandManager {
             e.printStackTrace();
         }
     }
-
-    private static OptionType mapType(Class<?> type) {
-        return switch (type.getSimpleName()) {
-            case "String" -> OptionType.STRING;
-            case "int", "Integer" -> OptionType.INTEGER;
-            case "boolean", "Boolean" -> OptionType.BOOLEAN;
-            default -> throw new IllegalArgumentException("Unsupported type: " + type);
-        };
-    }
-
 }
