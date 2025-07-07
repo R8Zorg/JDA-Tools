@@ -35,7 +35,6 @@ public class CommandsClass {
 
     @SubcommandGroup(parentName = "guild")
     public void add(SlashCommandInteractionEvent event) {
-        event.reply("You can't use this part of command").queue();
     }
 
     @Subcommand(parentNames = "guild get")
