@@ -2,8 +2,8 @@ package com.bot;
 
 import java.util.EnumSet;
 
-import com.bot.core.CommandManager;
-import com.bot.core.ListenersRegistrar;
+import com.bot.core.CommandsManager;
+import com.bot.core.ListenersManager;
 import com.bot.core.SlashCommandsHandler;
 
 import org.slf4j.Logger;
@@ -20,8 +20,8 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         Dotenv dotenv = Dotenv.load();
 
-        CommandManager commandManager = new CommandManager("com.bot.modules.commands");
-        ListenersRegistrar listenersRegistrar = new ListenersRegistrar("com.bot.modules.listeners");
+        CommandsManager commandsManager = new CommandsManager("com.bot.modules.commands");
+        ListenersManager listenersManager = new ListenersManager("com.bot.modules.listeners");
 
         EnumSet<GatewayIntent> gatewayIntents = EnumSet.of(
                 GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES,
@@ -29,11 +29,11 @@ public class Main {
                 GatewayIntent.SCHEDULED_EVENTS);
 
         JDA jda = JDABuilder.createDefault(dotenv.get("TOKEN"), gatewayIntents)
-                .addEventListeners(new SlashCommandsHandler(commandManager))
+                .addEventListeners(new SlashCommandsHandler(commandsManager))
                 .build();
-        jda.updateCommands().addCommands(commandManager.getSlashCommandData()).queue();
+        jda.updateCommands().addCommands(commandsManager.getSlashCommandData()).queue();
         jda.awaitReady();
-        listenersRegistrar.RegisterAllListeners(jda);
+        listenersManager.RegisterAllListeners(jda);
 
         logger.info("Bot {} started", jda.getSelfUser().getName());
     }

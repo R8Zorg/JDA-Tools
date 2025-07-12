@@ -11,14 +11,18 @@ import io.github.classgraph.ScanResult;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.EventListener;
 
-public class ListenersRegistrar {
-    private final Logger logger = LoggerFactory.getLogger(ListenersRegistrar.class);
+public class ListenersManager {
+    private final Logger logger = LoggerFactory.getLogger(ListenersManager.class);
     private final String packagesPath;
 
-    public ListenersRegistrar(String packagesPath) {
+    public ListenersManager(String packagesPath) {
         this.packagesPath = packagesPath;
     }
 
+    /**
+     * Register all listener classes annotated with {@link com.bot.core.annotations.EventListeners}
+     * @param jda {@link JDA}
+     */
     public void RegisterAllListeners(JDA jda) {
         ScanResult scanResult = new ClassGraph()
                 .enableClassInfo()

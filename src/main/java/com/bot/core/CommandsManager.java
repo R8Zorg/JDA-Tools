@@ -33,7 +33,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.utils.data.SerializableData;
 
-public class CommandManager {
+public class CommandsManager {
     private class CommandExecutor {
         private final Object instance;
         private final Method method;
@@ -55,12 +55,19 @@ public class CommandManager {
     private final Map<String, CommandExecutor> COMMANDS = new HashMap<>();
     private final Map<String, SlashCommandData> COMMANDS_DATA = new HashMap<>();
     private final Map<String, SubcommandGroupData> COMMANDGROUPS_DATA = new HashMap<>();
-    final static Logger logger = LoggerFactory.getLogger(CommandManager.class);
+    final static Logger logger = LoggerFactory.getLogger(CommandsManager.class);
 
-    public CommandManager(String packagesPath) {
+    /**
+     * 
+     * @param packagesPath Path to directory with classes containing slashcommands
+     */
+    public CommandsManager(String packagesPath) {
         registerAllCommands(packagesPath);
     }
 
+    /**
+     * @return Collection of SlashCommandData
+     */
     public Collection<SlashCommandData> getSlashCommandData() {
         return COMMANDS_DATA.values();
     }
@@ -84,7 +91,7 @@ public class CommandManager {
                         Command command = method.getAnnotation(Command.class);
                         String commandName = command.name().isEmpty() ? method.getName() : command.name();
                         String description = command.description();
-                        InteractionContextType type = command.type();
+                        InteractionContextType type = command.contextType();
                         COMMANDS.put(commandName, new CommandExecutor(instance, method));
                         SlashCommandData commandData = Commands.slash(commandName, description).setContexts(type);
                         addOptions(commandData, method);
@@ -118,7 +125,8 @@ public class CommandManager {
                         SubcommandData subcommandData = new SubcommandData(subcommandName, description);
                         addOptions(subcommandData, method);
 
-                        SerializableData parentData = parentNames.split(" ").length == 1 ? COMMANDS_DATA.get(parentNames)
+                        SerializableData parentData = parentNames.split(" ").length == 1
+                                ? COMMANDS_DATA.get(parentNames)
                                 : COMMANDGROUPS_DATA.get(parentNames.split(" ")[1]);
                         if (parentData instanceof SlashCommandData slashData) {
                             slashData.addSubcommands(subcommandData);
@@ -134,14 +142,16 @@ public class CommandManager {
     }
 
     private int getOrder(Method method) {
+        //First, all main commands must be registered, then groups, and only after that subcommands.
+        // Otherwise subcommands and subcommandGroups may be initialized before command and cause an error.
         if (method.isAnnotationPresent(Command.class)) {
-            return method.getAnnotation(Command.class).order();
+            return 1;
         }
         if (method.isAnnotationPresent(SubcommandGroup.class)) {
-            return method.getAnnotation(SubcommandGroup.class).order();
+            return 2;
         }
         if (method.isAnnotationPresent(Subcommand.class)) {
-            return method.getAnnotation(Subcommand.class).order();
+            return 3;
         }
         return Integer.MAX_VALUE;
     }
@@ -166,6 +176,10 @@ public class CommandManager {
         }
     }
 
+    /**
+     * Hanldes SlashCommandInteractionEvent and calls corrseponding method
+     * @param event SlashCommandInteractionEvent
+    */
     public void handleCommand(SlashCommandInteractionEvent event) {
         String fullCommandName = event.getFullCommandName();
         CommandExecutor commandExecutor = COMMANDS.get(fullCommandName);

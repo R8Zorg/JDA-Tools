@@ -4,9 +4,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class SlashCommandsHandler extends ListenerAdapter {
-    private final CommandManager commandManager;
+    private final CommandsManager commandManager;
 
-    public SlashCommandsHandler(CommandManager commandManager) {
+    public SlashCommandsHandler(CommandsManager commandManager) {
         this.commandManager = commandManager;
     }
 

@@ -5,14 +5,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-
+/**
+ * Marks parameter as command's parameter.
+ * 
+ * @param name        Parameter name
+ * @param description Parameter description
+ * @param required    Is parameter required. True by default
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Option {
     String name() default "";
-    String description() default "Description not provided.";
-    boolean required() default true;
-    OptionType type() default OptionType.STRING;
-}
 
+    String description() default "Description not provided.";
+
+    boolean required() default true;
+}
