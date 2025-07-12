@@ -20,10 +20,10 @@ public class ListenersManager {
     }
 
     /**
-     * Register all listener classes annotated with {@link com.bot.core.annotations.EventListeners}
-     * @param jda {@link JDA}
+     * Returns all listener classes annotated with
+     * {@link com.bot.core.annotations.EventListeners}
      */
-    public void RegisterAllListeners(JDA jda) {
+    public void registerListeners(JDA jda) {
         ScanResult scanResult = new ClassGraph()
                 .enableClassInfo()
                 .enableAnnotationInfo()
@@ -33,8 +33,7 @@ public class ListenersManager {
             Class<?> clazz = classInfo.loadClass();
             if (EventListener.class.isAssignableFrom(clazz)) {
                 try {
-                    Object instance = clazz.getDeclaredConstructor().newInstance();
-                    jda.addEventListener(instance);
+                    jda.addEventListener(clazz.getDeclaredConstructor().newInstance());
                 } catch (Exception e) {
                     logger.error(e.toString());
                 }
@@ -42,3 +41,4 @@ public class ListenersManager {
         }
     }
 }
+

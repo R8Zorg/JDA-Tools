@@ -33,7 +33,7 @@ public class Main {
                 .build();
         jda.updateCommands().addCommands(commandsManager.getSlashCommandData()).queue();
         jda.awaitReady();
-        listenersManager.RegisterAllListeners(jda);
+        listenersManager.registerListeners(jda);
 
         logger.info("Bot {} started", jda.getSelfUser().getName());
     }
