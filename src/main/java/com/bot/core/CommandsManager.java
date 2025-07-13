@@ -33,6 +33,11 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.utils.data.SerializableData;
 
+/**
+ *
+ * Call {@link #getSlashCommandData()} to retrieve the command data and register
+ * it using JDA's addCommands method.
+ */
 public class CommandsManager {
     private class CommandExecutor {
         private final Object instance;

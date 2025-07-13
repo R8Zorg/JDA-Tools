@@ -6,6 +6,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class SlashCommandsHandler extends ListenerAdapter {
     private final CommandsManager commandManager;
 
+    /**
+     * Used to handle slash command interactions
+     */
     public SlashCommandsHandler(CommandsManager commandManager) {
         this.commandManager = commandManager;
     }

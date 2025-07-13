@@ -11,6 +11,10 @@ import io.github.classgraph.ScanResult;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.EventListener;
 
+/**
+ *
+ * Call {@link #registerListeners(JDA)} to register all listeners
+ */
 public class ListenersManager {
     private final Logger logger = LoggerFactory.getLogger(ListenersManager.class);
     private final String packagesPath;
@@ -24,21 +28,21 @@ public class ListenersManager {
      * {@link com.bot.core.annotations.EventListeners}
      */
     public void registerListeners(JDA jda) {
-        ScanResult scanResult = new ClassGraph()
+        try (ScanResult scanResult = new ClassGraph()
                 .enableClassInfo()
                 .enableAnnotationInfo()
                 .acceptPackages(packagesPath)
-                .scan();
-        for (ClassInfo classInfo : scanResult.getClassesWithAnnotation(EventListeners.class.getName())) {
-            Class<?> clazz = classInfo.loadClass();
-            if (EventListener.class.isAssignableFrom(clazz)) {
-                try {
-                    jda.addEventListener(clazz.getDeclaredConstructor().newInstance());
-                } catch (Exception e) {
-                    logger.error(e.toString());
+                .scan()) {
+            for (ClassInfo classInfo : scanResult.getClassesWithAnnotation(EventListeners.class.getName())) {
+                Class<?> clazz = classInfo.loadClass();
+                if (EventListener.class.isAssignableFrom(clazz)) {
+                    try {
+                        jda.addEventListener(clazz.getDeclaredConstructor().newInstance());
+                    } catch (Exception e) {
+                        logger.error(e.toString());
+                    }
                 }
             }
         }
     }
 }
-
