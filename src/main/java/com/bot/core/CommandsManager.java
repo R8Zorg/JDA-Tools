@@ -67,6 +67,7 @@ public class CommandsManager {
 
     /**
      * Use it to register slash commands in JDA
+     * 
      * @return Collection of SlashCommandData
      */
     public Collection<SlashCommandData> getSlashCommandData() {
@@ -74,77 +75,107 @@ public class CommandsManager {
     }
 
     private void registerAllCommands(String packagesPath) {
-        ScanResult scanResult = new ClassGraph()
+        try (ScanResult scanResult = new ClassGraph()
                 .enableClassInfo()
                 .enableAnnotationInfo()
                 .acceptPackages(packagesPath)
-                .scan();
-        List<ClassInfo> classInfos = scanResult.getClassesWithAnnotation(SlashCommands.class.getName());
-        for (ClassInfo classInfo : classInfos) {
-            Class<?> commandsClass = classInfo.loadClass();
-            try {
-                Object instance = commandsClass.getDeclaredConstructor().newInstance();
+                .scan()) {
+            List<ClassInfo> classInfos = scanResult.getClassesWithAnnotation(SlashCommands.class.getName());
+            for (ClassInfo classInfo : classInfos) {
+                Class<?> commandsClass = classInfo.loadClass();
+                try {
+                    Object instance = commandsClass.getDeclaredConstructor().newInstance();
 
-                List<Method> methods = Arrays.asList(commandsClass.getDeclaredMethods());
-                methods.sort(Comparator.comparingInt(this::getOrder));
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(Command.class)) {
-                        Command command = method.getAnnotation(Command.class);
-                        String commandName = command.name().isEmpty() ? method.getName() : command.name();
-                        String description = command.description();
-                        InteractionContextType type = command.contextType();
-                        COMMANDS.put(commandName, new CommandExecutor(instance, method));
-                        SlashCommandData commandData = Commands.slash(commandName, description).setContexts(type);
-                        addOptions(commandData, method);
-                        COMMANDS_DATA.put(commandName, commandData);
-                    } else if (method.isAnnotationPresent(SubcommandGroup.class)) {
-                        SubcommandGroup subcommandGroup = method.getAnnotation(SubcommandGroup.class);
-
-                        String parentName = subcommandGroup.parentName();
-                        String subcommandGroupName = subcommandGroup.name().isEmpty() ? method.getName()
-                                : subcommandGroup.name();
-                        String fullCommandName = parentName + " " + subcommandGroupName;
-                        COMMANDS.put(fullCommandName, new CommandExecutor(instance, method));
-
-                        String description = subcommandGroup.description();
-                        SubcommandGroupData subcommandGroupData = new SubcommandGroupData(subcommandGroupName,
-                                description);
-                        COMMANDGROUPS_DATA.put(subcommandGroupName, subcommandGroupData);
-
-                        SlashCommandData parentCommandData = COMMANDS_DATA.get(parentName);
-                        parentCommandData.addSubcommandGroups(subcommandGroupData);
-                    } else if (method.isAnnotationPresent(Subcommand.class)) {
-                        Subcommand subcommand = method.getAnnotation(Subcommand.class);
-
-                        String parentNames = subcommand.parentNames();
-                        String subcommandName = subcommand.name().isEmpty() ? method.getName() : subcommand.name();
-                        String fullCommandName = parentNames + " " + subcommandName;
-
-                        COMMANDS.put(fullCommandName, new CommandExecutor(instance, method));
-
-                        String description = subcommand.description();
-                        SubcommandData subcommandData = new SubcommandData(subcommandName, description);
-                        addOptions(subcommandData, method);
-
-                        SerializableData parentData = parentNames.split(" ").length == 1
-                                ? COMMANDS_DATA.get(parentNames)
-                                : COMMANDGROUPS_DATA.get(parentNames.split(" ")[1]);
-                        if (parentData instanceof SlashCommandData slashData) {
-                            slashData.addSubcommands(subcommandData);
-                        } else if (parentData instanceof SubcommandGroupData groupData) {
-                            groupData.addSubcommands(subcommandData);
+                    List<Method> methods = Arrays.asList(commandsClass.getDeclaredMethods());
+                    methods.sort(Comparator.comparingInt(this::getOrder));
+                    for (Method method : methods) {
+                        if (method.isAnnotationPresent(Command.class)) {
+                            registerCommand(instance, method);
+                        } else if (method.isAnnotationPresent(SubcommandGroup.class)) {
+                            registerSubcommandGroup(instance, method);
+                        } else if (method.isAnnotationPresent(Subcommand.class)) {
+                            registerSubcommand(instance, method);
                         }
                     }
+                } catch (ReflectiveOperationException e) {
+                    logger.error("Failed to instantiate command class {}: {} ", commandsClass.getName(),
+                            e.getMessage());
+                } catch (Exception e) {
+                    logger.error("Unexpected error while processing class {}: {}", commandsClass.getName(),
+                            e.toString());
                 }
-            } catch (Exception e) {
-                logger.error(e.toString());
             }
         }
     }
 
+    private void registerCommand(Object instance, Method method) {
+        Command command = method.getAnnotation(Command.class);
+        String commandName = command.name().isEmpty() ? method.getName() : command.name();
+        String description = command.description();
+        InteractionContextType type = command.contextType();
+
+        COMMANDS.put(commandName, new CommandExecutor(instance, method));
+        SlashCommandData commandData = Commands.slash(commandName, description).setContexts(type);
+        addOptions(commandData, method);
+        COMMANDS_DATA.put(commandName, commandData);
+    }
+
+    private void registerSubcommandGroup(Object instance, Method method) {
+        SubcommandGroup group = method.getAnnotation(SubcommandGroup.class);
+        String parentName = group.parentName();
+        String groupName = group.name().isEmpty() ? method.getName()
+                : group.name();
+        String fullCommandName = parentName + " " + groupName;
+
+        COMMANDS.put(fullCommandName, new CommandExecutor(instance, method));
+
+        SubcommandGroupData subcommandGroupData = new SubcommandGroupData(groupName, group.description());
+        COMMANDGROUPS_DATA.put(groupName, subcommandGroupData);
+
+        SlashCommandData parentData = COMMANDS_DATA.get(parentName);
+        if (parentData == null) {
+            logger.warn("Parent command not found for subcommand group {}", parentName);
+            return;
+        }
+        parentData.addSubcommandGroups(subcommandGroupData);
+    }
+
+    private void registerSubcommand(Object instance, Method method) {
+        Subcommand subcommand = method.getAnnotation(Subcommand.class);
+        String parentNames = subcommand.parentNames();
+        String subcommandName = subcommand.name().isEmpty() ? method.getName() : subcommand.name();
+        String fullCommandName = parentNames + " " + subcommandName;
+
+        COMMANDS.put(fullCommandName, new CommandExecutor(instance, method));
+
+        SubcommandData subcommandData = new SubcommandData(subcommandName, subcommand.description());
+        addOptions(subcommandData, method);
+
+        String[] parts = parentNames.split(" ");
+        if (parts.length == 1) {
+            SlashCommandData command = COMMANDS_DATA.get(parts[0]);
+            if (command == null) {
+                logger.warn("Parent command not found for subcommand {}", subcommand.name());
+                return;
+            }
+            command.addSubcommands(subcommandData);
+        } else if (parts.length == 2) {
+            SubcommandGroupData commandGroup = COMMANDGROUPS_DATA.get(parts[1]);
+            if (commandGroup == null) {
+                logger.warn("Subcommand group not found for subcommand {}", subcommand.name());
+                return;
+            }
+            commandGroup.addSubcommands(subcommandData);
+        } else {
+            logger.warn("Invalid parent names format for subcommand {}", subcommand.name());
+        }
+    }
+
     private int getOrder(Method method) {
-        //First, all main commands must be registered, then groups, and only after that subcommands.
-        // Otherwise subcommands and subcommandGroups may be initialized before command and cause an error.
+        // First, all main commands must be registered, then groups, and only after that
+        // subcommands.
+        // Otherwise subcommands and subcommandGroups may be initialized before command
+        // and cause an error.
         if (method.isAnnotationPresent(Command.class)) {
             return 1;
         }
@@ -179,8 +210,9 @@ public class CommandsManager {
 
     /**
      * Hanldes SlashCommandInteractionEvent and calls corrseponding method
+     * 
      * @param event SlashCommandInteractionEvent
-    */
+     */
     public void handleCommand(SlashCommandInteractionEvent event) {
         String fullCommandName = event.getFullCommandName();
         CommandExecutor commandExecutor = COMMANDS.get(fullCommandName);
