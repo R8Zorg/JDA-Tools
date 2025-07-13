@@ -66,6 +66,7 @@ public class CommandsManager {
     }
 
     /**
+     * Use it to register slash commands in JDA
      * @return Collection of SlashCommandData
      */
     public Collection<SlashCommandData> getSlashCommandData() {
