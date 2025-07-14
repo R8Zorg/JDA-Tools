@@ -19,6 +19,10 @@ public class ListenersManager {
     private final Logger logger = LoggerFactory.getLogger(ListenersManager.class);
     private final String packagesPath;
 
+    /**
+     * 
+     * @param packagesPath Path to directory with classes containing listeners
+    */
     public ListenersManager(String packagesPath) {
         this.packagesPath = packagesPath;
     }
