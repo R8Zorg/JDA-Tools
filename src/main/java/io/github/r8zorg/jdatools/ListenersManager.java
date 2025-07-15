@@ -1,6 +1,6 @@
-package io.github.r8zorg.jdatools.core;
+package io.github.r8zorg.jdatools;
 
-import io.github.r8zorg.jdatools.core.annotations.EventListeners;
+import io.github.r8zorg.jdatools.annotations.EventListeners;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class ListenersManager {
 
     /**
      * Returns all listener classes annotated with
-     * {@link io.github.r8zorg.jdatools.core.annotations.EventListeners}
+     * {@link io.github.r8zorg.jdatools.annotations.EventListeners}
      */
     public void registerListeners(JDA jda) {
         try (ScanResult scanResult = new ClassGraph()

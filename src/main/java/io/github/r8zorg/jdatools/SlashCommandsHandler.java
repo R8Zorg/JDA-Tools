@@ -1,4 +1,4 @@
-package io.github.r8zorg.jdatools.core;
+package io.github.r8zorg.jdatools;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

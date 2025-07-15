@@ -1,4 +1,4 @@
-package io.github.r8zorg.jdatools.core.annotations;
+package io.github.r8zorg.jdatools.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
