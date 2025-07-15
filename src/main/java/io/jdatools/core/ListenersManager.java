@@ -1,6 +1,6 @@
-package com.bot.core;
+package io.jdatools.core;
 
-import com.bot.core.annotations.EventListeners;
+import io.jdatools.core.annotations.EventListeners;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class ListenersManager {
 
     /**
      * Returns all listener classes annotated with
-     * {@link com.bot.core.annotations.EventListeners}
+     * {@link io.jdatools.core.annotations.EventListeners}
      */
     public void registerListeners(JDA jda) {
         try (ScanResult scanResult = new ClassGraph()

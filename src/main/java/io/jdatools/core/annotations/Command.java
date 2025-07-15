@@ -1,4 +1,4 @@
-package com.bot.core.annotations;
+package io.jdatools.core.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
