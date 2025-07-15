@@ -1,56 +1,38 @@
-package io.jdatools.core.annotations;
+package io.github.r8zorg.jdatools.core.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Marks method as subcommand.
+ * Marks method as subcommand group.
  * 
- * @param parentNames Names of all parent commands.
- * @param name        Command name. Leave empty to register as method's name
+ * @param parentName  Parent command name
+ * @param name        SubcommandGroup name
  * @param description Command description. Leave empty to register as
  *                    "Description not provided."
+ * 
  *                    <p>
- *                    Example. Command with subcommand:
+ *                    Example:
  * 
  *                    <pre>
  * <code>
  * Command()
  * public void get(SlashCommandInteractionEvent event) {}
- * </code>
- * 
- * <code>
- * Subcommand(parentNames = "get")
- * public void member(SlashCommandInteractionEvent event){ ... }
- * </code>
- *                    </pre>
  *
- *                    <p>
- *                    Command with subcommand group:
- * 
- *                    <pre>
- *<code> 
- * Command()
- * public void get(SlashCommandInteractionEvent event) {}
- * </code>
- * 
- *<code> 
  * SubcommandGroup(parentName = "get")
  * public void guild(SlashCommandInteractionEvent event) {}
- * </code>
  *
- *<code> 
  * Subcommand(parentNames = "get guild")
  * public void owner(SlashCommandInteractionEvent event){ ... }
  * </code>
  *                    </pre>
  * 
- * @see SubcommandGroup
+ * @see Subcommand
  * @see Option
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Subcommand {
-    String parentNames();
+public @interface SubcommandGroup {
+    String parentName();
 
     String name() default "";
 

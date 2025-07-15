@@ -1,4 +1,4 @@
-package io.jdatools.core.annotations;
+package io.github.r8zorg.jdatools.core.annotations;
 
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 

@@ -1,4 +1,4 @@
-package io.jdatools.core;
+package io.github.r8zorg.jdatools.core;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.jdatools.core.TypeOptions.OptionHandler;
-import io.jdatools.core.annotations.Command;
-import io.jdatools.core.annotations.Option;
-import io.jdatools.core.annotations.SlashCommands;
-import io.jdatools.core.annotations.Subcommand;
-import io.jdatools.core.annotations.SubcommandGroup;
+import io.github.r8zorg.jdatools.core.TypeOptions.OptionHandler;
+import io.github.r8zorg.jdatools.core.annotations.Command;
+import io.github.r8zorg.jdatools.core.annotations.Option;
+import io.github.r8zorg.jdatools.core.annotations.SlashCommands;
+import io.github.r8zorg.jdatools.core.annotations.Subcommand;
+import io.github.r8zorg.jdatools.core.annotations.SubcommandGroup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

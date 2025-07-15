@@ -1,9 +1,9 @@
-package io.jdatools.core;
+package io.github.r8zorg.jdatools.core;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import io.jdatools.core.annotations.OptionExtractor;
+import io.github.r8zorg.jdatools.core.annotations.OptionExtractor;
 
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.Member;
