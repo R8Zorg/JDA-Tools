@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.bot</groupId>
-    <artifactId>JDA-BaseBot</artifactId>
-    <version>1.0</version>
+    <groupId>io.github.r8zorg</groupId>
+    <artifactId>JDA-Tools</artifactId>
+    <version>1.0.0</version>
 
     <dependencies>
         <dependency>
@@ -20,9 +20,9 @@
             <version>3.0.2</version>
         </dependency>
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.10.2</version>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.180</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
