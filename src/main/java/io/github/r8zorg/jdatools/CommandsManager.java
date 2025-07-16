@@ -105,7 +105,11 @@ public class CommandsManager {
                 } catch (ReflectiveOperationException e) {
                     logger.error("Failed to instantiate command class {}: {} ", commandsClass.getName(),
                             e.getMessage());
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
+                    logger.error("Unsupported argument type while processing class {}: {}", commandsClass.getName(),
+                            e.toString());
+                    logger.error("Primitive types are not supported — use wrapper classes like Integer instead of int");
+                } catch (Exception e){
                     logger.error("Unexpected error while processing class {}: {}", commandsClass.getName(),
                             e.toString());
                 }
