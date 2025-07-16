@@ -4,47 +4,51 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Marks method as subcommand.
- * 
- * @param parentNames Names of all parent commands.
- * @param name        Command name. Leave empty to register as method's name
- * @param description Command description. Leave empty to register as
- *                    "Description not provided."
- *                    <p>
- *                    Example. Command with subcommand:
- * 
- *                    <pre>
- * <code>
- * Command()
- * public void get(SlashCommandInteractionEvent event) {}
- * </code>
- * 
- * <code>
- * Subcommand(parentNames = "get")
- * public void member(SlashCommandInteractionEvent event){ ... }
- * </code>
- *                    </pre>
+ * Marks a method as a subcommand.
  *
- *                    <p>
- *                    Command with subcommand group:
+ * <p>
+ * <strong>Parameters:</strong>
+ * </p>
+ * <ul>
+ * <li><strong>parentNames</strong> — Space-separated list of parent command
+ * names (e.g. {@code "get guild"}).</li>
+ * <li><strong>name</strong> — Subcommand name. if empty, method name will be
+ * used.</li>
+ * <li><strong>description</strong> — Subcommand description. If empty, defaults
+ * to {@code "Description not provided."}.</li>
+ * </ul>
+ *
+ * <p>
+ * <strong>Example: command with a subcommand:</strong>
+ * </p>
  * 
- *                    <pre>
- *<code> 
+ * <pre>
+ * <code>
  * Command()
  * public void get(SlashCommandInteractionEvent event) {}
+ *
+ * Subcommand(parentNames = "get")
+ * public void member(SlashCommandInteractionEvent event) { ... }
  * </code>
+ * </pre>
+ *
+ * <p>
+ * <strong>Example: command with a subcommand group:</strong>
+ * </p>
  * 
- *<code> 
+ * <pre>
+ * <code>
+ * Command()
+ * public void get(SlashCommandInteractionEvent event) {}
+ *
  * SubcommandGroup(parentName = "get")
  * public void guild(SlashCommandInteractionEvent event) {}
- * </code>
  *
- *<code> 
  * Subcommand(parentNames = "get guild")
- * public void owner(SlashCommandInteractionEvent event){ ... }
+ * public void owner(SlashCommandInteractionEvent event) { ... }
  * </code>
- *                    </pre>
- * 
+ * </pre>
+ *
  * @see SubcommandGroup
  * @see Option
  */

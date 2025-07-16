@@ -4,17 +4,24 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Marks method as subcommand group.
+ * Marks a method as a subcommand group.
+ *
+ * <p>
+ * <strong>Parameters:</strong>
+ * </p>
+ * <ul>
+ * <li><strong>parentName</strong> — Name of the parent command.</li>
+ * <li><strong>name</strong> — Name of subcommand group. If empty, method name will be
+ * used.</li>
+ * <li><strong>description</strong> — Command description. If empty, defaults to
+ * {@code "Description not provided."}.</li>
+ * </ul>
+ *
+ * <p>
+ * <strong>Example:</strong>
+ * </p>
  * 
- * @param parentName  Parent command name
- * @param name        SubcommandGroup name
- * @param description Command description. Leave empty to register as
- *                    "Description not provided."
- * 
- *                    <p>
- *                    Example:
- * 
- *                    <pre>
+ * <pre>
  * <code>
  * Command()
  * public void get(SlashCommandInteractionEvent event) {}
@@ -23,10 +30,10 @@ import java.lang.annotation.RetentionPolicy;
  * public void guild(SlashCommandInteractionEvent event) {}
  *
  * Subcommand(parentNames = "get guild")
- * public void owner(SlashCommandInteractionEvent event){ ... }
+ * public void owner(SlashCommandInteractionEvent event) { ... }
  * </code>
- *                    </pre>
- * 
+ * </pre>
+ *
  * @see Subcommand
  * @see Option
  */

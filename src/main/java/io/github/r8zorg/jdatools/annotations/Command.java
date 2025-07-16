@@ -7,25 +7,31 @@ import net.dv8tion.jda.api.interactions.InteractionContextType;
 
 /**
  * Marks method as slash command.
- * 
- * @param name        Command name. Leave empty to register as method's name
- * @param description Command description. Leave empty to register as
- *                    "Description not provided."
+ * <p>
+ * <strong>Parameters:</strong><br>
+ * <ul>
+ * <li><strong>name</strong> — Command name. If empty, method name will be
+ * used.</li>
+ * <li><strong>description</strong> — Command description. If empty, defaults to
+ * {@code "Description not provided."}.</li>
+ * </ul>
  *
- *                    <p>
- *                    Example:
- * 
- *                    <pre>
+ * <p>
+ * <strong>Example:</strong>
+ * </p>
+ *
+ * <pre>
  * <code>
- * Command(name="ping", description = "Check if bot is online")
+ * Command(name = "ping", description = "Check if bot is online")
  * public void ping(SlashCommandInteractionEvent event) { ... }
  * </code>
  * </pre>
  *
- *                    <p>
- *                    You can also skip annotation parameters:<br>
- * 
- *                    <pre>
+ * <p>
+ * You can also skip annotation parameters:
+ * </p>
+ *
+ * <pre>
  * <code>
  * Command()
  * public void ping(SlashCommandInteractionEvent event) { ... }
