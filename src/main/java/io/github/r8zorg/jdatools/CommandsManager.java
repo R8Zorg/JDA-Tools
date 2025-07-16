@@ -107,8 +107,7 @@ public class CommandsManager {
                             e.getMessage());
                 } catch (IllegalArgumentException e) {
                     logger.error("Unsupported argument type while processing class {}: {}", commandsClass.getName(),
-                            e.toString());
-                    logger.error("Primitive types are not supported — use wrapper classes like Integer instead of int");
+                            e.toString() + "\nPrimitive types are not supported — use wrapper classes like Integer instead of int");
                 } catch (Exception e){
                     logger.error("Unexpected error while processing class {}: {}", commandsClass.getName(),
                             e.toString());
