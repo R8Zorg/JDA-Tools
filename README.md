@@ -1,9 +1,7 @@
 ## JDA-Tools
-***
 JDA-Tools is a simple tool for use with [JDA](https://github.com/discord-jda/JDA) to assist in slash commands creation like on Python libraries.
 
 ## Functionality
-***
 JDA-Tools represents few annotations for registration listeners, commands and option parameters. <br>
 **@SlashCommands** for class which contains commands.<br>
 
@@ -47,12 +45,18 @@ Now you can create commands:
 ```java
 @SlashCommands
 public class Say {
-    @Command()
+    @Command(description = "Send a message")
     public void say(SlashCommandInteractionEvent event,
-                    @Option(name = "message", description = "Message to send") String message) {
-        event.getChannel().sendMessage(message).complete();
-        event.reply("Message sent").setEphemeral(true).queue();
+            @Option(name = "message", description = "Message to send") String message) {
+        try {
+        event.getChannel().sendMessage(message).queue(_ -> {
+            event.reply("Message sent").setEphemeral(true).queue();
+        });
+        } catch (MissingAccessException e) {
+            event.reply("Failed to send message: " + e.getMessage()).setEphemeral(true).queue();
+        }
     }
+
 }
 ```
 
