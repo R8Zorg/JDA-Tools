@@ -45,13 +45,16 @@ Now you can create commands:
 ```java
 @SlashCommands
 public class Say {
-    @Command(description = "Send a message")
+    @Command(description = "Send a message in provided channel")
     public void say(SlashCommandInteractionEvent event,
-            @Option(name = "message", description = "Message to send") String message) {
+            @Option(name = "message", description = "Message to send") String message,
+            @Option(name = "channel", description = "Text channel", required = false, channelType = ChannelType.TEXT) TextChannel channel) {
         try {
-        event.getChannel().sendMessage(message).queue(_ -> {
-            event.reply("Message sent").setEphemeral(true).queue();
-        });
+            if (channel != null) {
+                channel.sendMessage(message).queue(_ -> replyOnSuccess(event));
+            } else {
+                event.getChannel().sendMessage(message).queue(_ -> replyOnSuccess(event));
+            }
         } catch (MissingAccessException e) {
             event.reply("Failed to send message: " + e.getMessage()).setEphemeral(true).queue();
         }
