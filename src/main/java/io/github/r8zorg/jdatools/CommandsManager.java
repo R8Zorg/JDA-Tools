@@ -24,10 +24,12 @@ import org.slf4j.LoggerFactory;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
@@ -107,8 +109,8 @@ public class CommandsManager {
                             e.getMessage());
                 } catch (IllegalArgumentException e) {
                     logger.error("Unsupported argument type while processing class {}: {}", commandsClass.getName(),
-                            e.toString() + "\nPrimitive types are not supported — use wrapper classes like Integer instead of int");
-                } catch (Exception e){
+                            e.toString());
+                } catch (Exception e) {
                     logger.error("Unexpected error while processing class {}: {}", commandsClass.getName(),
                             e.toString());
                 }
@@ -204,12 +206,15 @@ public class CommandsManager {
                     if (optionHandler == null) {
                         throw new IllegalArgumentException("Unsupported parameter type: " + parameter.getType());
                     }
+                    OptionData optionData = new OptionData(optionHandler.optionType(), option.name(),
+                            option.description(), option.required());
+                    if (option.channelType() != ChannelType.UNKNOWN) {
+                        optionData.setChannelTypes(option.channelType());
+                    }
                     if (data instanceof SlashCommandData slashData) {
-                        slashData.addOption(optionHandler.optionType(), option.name(), option.description(),
-                                option.required());
+                        slashData.addOptions(optionData);
                     } else if (data instanceof SubcommandData subData) {
-                        subData.addOption(optionHandler.optionType(), option.name(), option.description(),
-                                option.required());
+                        subData.addOptions(optionData);
                     }
                 }
             }

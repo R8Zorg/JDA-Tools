@@ -49,4 +49,5 @@ public @interface Command {
     String description() default "Description not provided.";
 
     InteractionContextType contextType() default InteractionContextType.GUILD;
+    // TODO: setDefaultPermissions in a separate interface
 }

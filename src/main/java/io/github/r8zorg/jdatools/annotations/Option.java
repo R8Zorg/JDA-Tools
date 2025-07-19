@@ -5,6 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+
 /**
  * Marks a method parameter as a slash command option.
  * <p>
@@ -47,4 +50,6 @@ public @interface Option {
     String description() default "Description not provided.";
 
     boolean required() default true;
+
+    ChannelType channelType() default ChannelType.UNKNOWN;
 }
