@@ -4,9 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.github.r8zorg.jdatools.annotations.OptionExtractor;
-
-import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.Channel;
