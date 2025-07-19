@@ -212,8 +212,6 @@ public class CommandsManager {
                         optionData.setChannelTypes(option.channelType());
                     }
                     if (data instanceof SlashCommandData slashData) {
-                        slashData.addOption(optionHandler.optionType(), option.name(), option.description(),
-                                option.required());
                         slashData.addOptions(optionData);
                     } else if (data instanceof SubcommandData subData) {
                         subData.addOptions(optionData);
