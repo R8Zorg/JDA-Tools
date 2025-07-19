@@ -121,3 +121,6 @@ public class MessagesListener extends ListenerAdapter {
 }
 ```
 
+# ⚠️ Warning
+This tool can't provide all features in [JDA](https://github.com/discord-jda/JDA). I add features as needed while writing my bot.<br>
+If you have any suggestions on how to improve or update something, I will be very glad.
