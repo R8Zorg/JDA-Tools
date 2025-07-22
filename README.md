@@ -1,5 +1,5 @@
 ## JDA-Tools
-JDA-Tools is a simple tool for use with [JDA](https://github.com/discord-jda/JDA) to assist in slash commands creation like on Python libraries.
+JDA-Tools is a lightweight framework for creating Discord bots with annotations based on [JDA](https://github.com/discord-jda/JDA), like on Python libraries.
 
 ## Functionality
 JDA-Tools represents few annotations for registration listeners, commands and option parameters. <br>
