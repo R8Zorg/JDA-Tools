@@ -14,8 +14,6 @@ JDA-Tools represents few annotations for registration listeners, commands and op
 **@EventListeners** for event listener class.<br>* - required
 # Usage
 ## Main class
-You need to create new instance of **CommandsManager** and **ListenersManager** and specify path to directories in which commands and listeners classes are located in.
-Then you need to manually add new **SlashCommandsHandler** for automatic handling slashcommand events and call **registerListeners** in **ListenersManager** when **JDA** is **ready**.
 ```java
 public class Main {
     final static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -24,18 +22,17 @@ public class Main {
         Dotenv dotenv = Dotenv.load();
 
         CommandsManager commandsManager = new CommandsManager("path.to.commands.directory");
-        ListenersManager listenersManager = new ListenersManager("path.to.listeners.directory");
+        ListenersManager listenersManager = new ListenersManager("path.to.listeners.directory", commandsManager);
 
         EnumSet<GatewayIntent> gatewayIntents = EnumSet.of(
                 GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES,
                 GatewayIntent.GUILD_EXPRESSIONS, GatewayIntent.SCHEDULED_EVENTS);
 
         JDA jda = JDABuilder.createDefault(dotenv.get("TOKEN"), gatewayIntents)
-                .addEventListeners(new SlashCommandsHandler(commandsManager))
+                .addEventListeners(listenersManager.getAllListeners()))
                 .build();
         jda.updateCommands().addCommands(commandsManager.getSlashCommandData()).queue();
-        jda.awaitReady();
-        listenersManager.registerListeners(jda);
+        jda.awaitReady();;
 
         logger.info("Bot {} started", jda.getSelfUser().getName());
     }
@@ -67,6 +64,7 @@ public class Say {
 @SlashCommands
 public class GuildInfo {
     @Command(description = "Get guild's owner")
+    @AdditionalSettings(defaultPermissions = Permission.ADMINISTRATOR)
     public void guild(SlashCommandInteractionEvent event) {
     }
 
