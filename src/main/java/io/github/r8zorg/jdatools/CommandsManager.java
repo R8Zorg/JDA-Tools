@@ -13,6 +13,7 @@ import java.util.Map;
 
 import io.github.r8zorg.jdatools.TypeOptions.OptionHandler;
 import io.github.r8zorg.jdatools.annotations.Command;
+import io.github.r8zorg.jdatools.annotations.DefaultPermissions;
 import io.github.r8zorg.jdatools.annotations.Option;
 import io.github.r8zorg.jdatools.annotations.SlashCommands;
 import io.github.r8zorg.jdatools.annotations.Subcommand;
@@ -24,9 +25,11 @@ import org.slf4j.LoggerFactory;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -127,6 +130,7 @@ public class CommandsManager {
         COMMANDS.put(commandName, new CommandExecutor(instance, method));
         SlashCommandData commandData = Commands.slash(commandName, description).setContexts(type);
         addOptions(commandData, method);
+        setDefaultPermissions(commandData, method);
         COMMANDS_DATA.put(commandName, commandData);
     }
 
@@ -218,6 +222,13 @@ public class CommandsManager {
                     }
                 }
             }
+        }
+    }
+
+    private void setDefaultPermissions(SlashCommandData commandData, Method method) {
+        if (method.isAnnotationPresent(DefaultPermissions.class)) {
+            Permission[] permissions = method.getAnnotation(DefaultPermissions.class).permissions();
+            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
         }
     }
 
