@@ -249,7 +249,9 @@ public class CommandsManager {
         if (method == null)
             return;
 
-        if (method.isAnnotationPresent(OwnerOnly.class)) {
+        CommandExecutor cmdExecutor = COMMANDS.get(fullCommandName.split(" ")[0]);
+        Method mainCommandMethod = cmdExecutor.getMethod();
+        if (method.isAnnotationPresent(OwnerOnly.class) || mainCommandMethod.isAnnotationPresent(OwnerOnly.class)) {
             if (!OwnersRegistry.isOwner(event.getUser().getIdLong())) {
                 MessageEmbed embed = new EmbedBuilder()
                 .setTitle("Access error")
