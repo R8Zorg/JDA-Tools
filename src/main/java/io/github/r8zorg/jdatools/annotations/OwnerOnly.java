@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Allow command access only to bot's owner. Use
- * OwnersRegistry.setOwners(Collection<Long> ids)<br>
+ * OwnersRegistry.setOwners()<br>
  *
  * <p>
  * <strong>Example:</strong>

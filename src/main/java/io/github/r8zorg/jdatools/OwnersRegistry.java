@@ -7,7 +7,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
     /**
      * Class for &#64;OwnerOnly annotation support.<br>
-     * Contains Set<Long> ownerIds = new CopyOnWriteArraySet<>()<br>
+     * Contains CopyOnWriteArraySet<br>
      * So do not use addOwner or removeOwner often. It is not designed for that
      * 
      * 
