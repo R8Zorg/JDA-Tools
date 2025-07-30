@@ -1,5 +1,6 @@
 package io.github.r8zorg.jdatools;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -8,6 +9,11 @@ public class OwnersRegistry {
 
     public static boolean isOwner(long userId) {
         return ownerIds.contains(userId);
+    }
+
+    public static void setOwners(Collection<Long> ids) {
+        ownerIds.clear();
+        ownerIds.addAll(ids);
     }
 
     public static void addOwner(long userId) {
