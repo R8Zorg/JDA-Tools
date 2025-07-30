@@ -21,8 +21,8 @@ import net.dv8tion.jda.api.Permission;
  *
  * <pre>
  * <code>
- * Command(description = "Ban member")
- * AdditionalSettings(defaultPermissions = {Permission.BAN_MEMERS, MESSAGE_MANAGE})
+ * &#64;Command(description = "Ban member")
+ * &#64;AdditionalSettings(defaultPermissions = {Permission.BAN_MEMERS, MESSAGE_MANAGE})
  * public void ban(SlashCommandInteractionEvent event) { ... }
  * </code>
  * </pre>
@@ -33,7 +33,7 @@ import net.dv8tion.jda.api.Permission;
  *
  * <pre>
  * <code>
- * DefaultPermissions(permissions = Permission.ADMINISTRATOR)
+ * &#64;DefaultPermissions(permissions = Permission.ADMINISTRATOR)
  * public void admin_command(SlashCommandInteractionEvent event) { ... }
  * </code>
  * </pre>

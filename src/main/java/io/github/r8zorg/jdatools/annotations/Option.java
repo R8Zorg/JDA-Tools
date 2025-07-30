@@ -29,15 +29,15 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
  * 
  * <pre>
  * <code>
- * Option(name = "string", required = false) String param1
- * Option(name = "int", required = false) Integer param2
- * Option(name = "long", required = false) Long param3
- * Option(name = "bool", required = false) Boolean param4
- * Option(name = "double", required = false) Double param5
- * Option(name = "role", required = false) Role param6
- * Option(name = "member", required = false) Member param7
- * Option(name = "channel", required = false) Channel param8
- * Option(name = "attachment", required = false) Attachment param9
+ * &#64;Option(name = "string", required = false) String param1
+ * &#64;Option(name = "int", required = false) Integer param2
+ * &#64;Option(name = "long", required = false) Long param3
+ * &#64;Option(name = "bool", required = false) Boolean param4
+ * &#64;Option(name = "double", required = false) Double param5
+ * &#64;Option(name = "role", required = false) Role param6
+ * &#64;Option(name = "member", required = false) Member param7
+ * &#64;Option(name = "channel", required = false) Channel param8
+ * &#64;Option(name = "attachment", required = false) Attachment param9
  * </code>
  * </pre>
  */

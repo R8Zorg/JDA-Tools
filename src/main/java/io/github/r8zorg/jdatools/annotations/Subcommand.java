@@ -26,10 +26,10 @@ import java.lang.annotation.Target;
  * 
  * <pre>
  * <code>
- * Command()
+ * &#64;Command()
  * public void get(SlashCommandInteractionEvent event) {}
  *
- * Subcommand(parentNames = "get")
+ * &#64;Subcommand(parentNames = "get")
  * public void member(SlashCommandInteractionEvent event) { ... }
  * </code>
  * </pre>
@@ -40,13 +40,13 @@ import java.lang.annotation.Target;
  * 
  * <pre>
  * <code>
- * Command()
+ * &#64;Command()
  * public void get(SlashCommandInteractionEvent event) {}
  *
- * SubcommandGroup(parentName = "get")
+ * &#64;SubcommandGroup(parentName = "get")
  * public void guild(SlashCommandInteractionEvent event) {}
  *
- * Subcommand(parentNames = "get guild")
+ * &#64;Subcommand(parentNames = "get guild")
  * public void owner(SlashCommandInteractionEvent event) { ... }
  * </code>
  * </pre>

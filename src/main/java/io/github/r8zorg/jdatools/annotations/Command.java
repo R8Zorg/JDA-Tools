@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.interactions.InteractionContextType;
  *
  * <pre>
  * <code>
- * Command(name = "ping", description = "Check if bot is online")
+ * &#64;Command(name = "ping", description = "Check if bot is online")
  * public void ping(SlashCommandInteractionEvent event) { ... }
  * </code>
  * </pre>
@@ -35,7 +35,7 @@ import net.dv8tion.jda.api.interactions.InteractionContextType;
  *
  * <pre>
  * <code>
- * Command()
+ * &#64;Command
  * public void ping(SlashCommandInteractionEvent event) { ... }
  * </code>
  * </pre>
