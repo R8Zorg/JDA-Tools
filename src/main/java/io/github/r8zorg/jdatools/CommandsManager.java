@@ -1,5 +1,6 @@
 package io.github.r8zorg.jdatools;
 
+import java.awt.Color;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -13,8 +14,9 @@ import java.util.Map;
 
 import io.github.r8zorg.jdatools.TypeOptions.OptionHandler;
 import io.github.r8zorg.jdatools.annotations.Command;
-import io.github.r8zorg.jdatools.annotations.DefaultPermissions;
+import io.github.r8zorg.jdatools.annotations.AdditionalSettings;
 import io.github.r8zorg.jdatools.annotations.Option;
+import io.github.r8zorg.jdatools.annotations.OwnerOnly;
 import io.github.r8zorg.jdatools.annotations.SlashCommands;
 import io.github.r8zorg.jdatools.annotations.Subcommand;
 import io.github.r8zorg.jdatools.annotations.SubcommandGroup;
@@ -25,7 +27,9 @@ import org.slf4j.LoggerFactory;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
@@ -226,8 +230,8 @@ public class CommandsManager {
     }
 
     private void setDefaultPermissions(SlashCommandData commandData, Method method) {
-        if (method.isAnnotationPresent(DefaultPermissions.class)) {
-            Permission[] permissions = method.getAnnotation(DefaultPermissions.class).permissions();
+        if (method.isAnnotationPresent(AdditionalSettings.class)) {
+            Permission[] permissions = method.getAnnotation(AdditionalSettings.class).defaultPermissions();
             commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
         }
     }
@@ -244,6 +248,19 @@ public class CommandsManager {
         Method method = commandExecutor.getMethod();
         if (method == null)
             return;
+
+        if (method.isAnnotationPresent(OwnerOnly.class)) {
+            if (!OwnersRegistry.isOwner(event.getUser().getIdLong())) {
+                MessageEmbed embed = new EmbedBuilder()
+                .setTitle("Access error")
+                .setDescription("You cannot use this command.")
+                .setFooter("This command is for the owner only.")
+                .setColor(Color.RED)
+                .build();
+                event.replyEmbeds(embed).setEphemeral(true).queue();
+                return;
+            }
+        }
 
         List<Object> args = new ArrayList<>();
         Parameter[] parameters = method.getParameters();
