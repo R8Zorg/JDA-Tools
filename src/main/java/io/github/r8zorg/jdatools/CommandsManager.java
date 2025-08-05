@@ -15,6 +15,7 @@ import java.util.Map;
 import io.github.r8zorg.jdatools.TypeOptions.OptionHandler;
 import io.github.r8zorg.jdatools.annotations.Command;
 import io.github.r8zorg.jdatools.annotations.AdditionalSettings;
+import io.github.r8zorg.jdatools.annotations.Choice;
 import io.github.r8zorg.jdatools.annotations.Option;
 import io.github.r8zorg.jdatools.annotations.OwnerOnly;
 import io.github.r8zorg.jdatools.annotations.SlashCommands;
@@ -218,6 +219,11 @@ public class CommandsManager {
                             option.description(), option.required());
                     if (option.channelType() != ChannelType.UNKNOWN) {
                         optionData.setChannelTypes(option.channelType());
+                    }
+                    if (option.choices().length != 0) {
+                        for (Choice choice : option.choices()) {
+                            optionData.addChoice(choice.name(), choice.value());
+                        }
                     }
                     if (data instanceof SlashCommandData slashData) {
                         slashData.addOptions(optionData);
