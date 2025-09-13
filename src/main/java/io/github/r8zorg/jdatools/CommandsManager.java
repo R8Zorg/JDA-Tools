@@ -12,25 +12,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.github.r8zorg.jdatools.TypeOptions.OptionHandler;
-import io.github.r8zorg.jdatools.annotations.Command;
-import io.github.r8zorg.jdatools.annotations.AdditionalSettings;
-import io.github.r8zorg.jdatools.annotations.Choice;
-import io.github.r8zorg.jdatools.annotations.Option;
-import io.github.r8zorg.jdatools.annotations.OwnerOnly;
-import io.github.r8zorg.jdatools.annotations.SlashCommands;
-import io.github.r8zorg.jdatools.annotations.Subcommand;
-import io.github.r8zorg.jdatools.annotations.SubcommandGroup;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
+import io.github.r8zorg.jdatools.TypeOptions.OptionHandler;
+import io.github.r8zorg.jdatools.annotations.AdditionalSettings;
+import io.github.r8zorg.jdatools.annotations.Choice;
+import io.github.r8zorg.jdatools.annotations.Command;
+import io.github.r8zorg.jdatools.annotations.Option;
+import io.github.r8zorg.jdatools.annotations.OwnerOnly;
+import io.github.r8zorg.jdatools.annotations.SlashCommands;
+import io.github.r8zorg.jdatools.annotations.Subcommand;
+import io.github.r8zorg.jdatools.annotations.SubcommandGroup;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
@@ -95,6 +93,8 @@ public class CommandsManager {
                 .enableAnnotationInfo()
                 .acceptPackages(packagesPath)
                 .scan()) {
+            // TODO: try to register ALL commands first, then subcommand groups and
+            // subcommands
             List<ClassInfo> classInfos = scanResult.getClassesWithAnnotation(SlashCommands.class.getName());
             for (ClassInfo classInfo : classInfos) {
                 Class<?> commandsClass = classInfo.loadClass();
@@ -242,6 +242,36 @@ public class CommandsManager {
         }
     }
 
+    private Method getOwnerOnlyAnnotation(Method method, Method mainCommandMethod) {
+        if (method.isAnnotationPresent(OwnerOnly.class)) {
+            return method;
+        } else if (mainCommandMethod.isAnnotationPresent(OwnerOnly.class)) {
+            return mainCommandMethod;
+        }
+        return null;
+    }
+
+    private void replyAccessErrorEmbed(SlashCommandInteractionEvent event, Method method) {
+        String title = method.getAnnotation(OwnerOnly.class).title();
+        String description = method.getAnnotation(OwnerOnly.class).description();
+        String footer = method.getAnnotation(OwnerOnly.class).footer();
+        String imageUrl = method.getAnnotation(OwnerOnly.class).imageUrl();
+
+        EmbedBuilder embedBuilder = new EmbedBuilder()
+                .setDescription(description)
+                .setColor(Color.RED);
+        if (!title.equals("")) {
+            embedBuilder.setTitle(title);
+        }
+        if (!footer.equals("")) {
+            embedBuilder.setFooter(footer);
+        }
+        if (!imageUrl.equals(imageUrl)) {
+            embedBuilder.setImage(imageUrl);
+        }
+        event.replyEmbeds(embedBuilder.build()).setEphemeral(true).queue();
+    }
+
     /**
      * Hanldes SlashCommandInteractionEvent and calls corrseponding method
      * 
@@ -257,15 +287,11 @@ public class CommandsManager {
 
         CommandExecutor cmdExecutor = COMMANDS.get(fullCommandName.split(" ")[0]);
         Method mainCommandMethod = cmdExecutor.getMethod();
-        if (method.isAnnotationPresent(OwnerOnly.class) || mainCommandMethod.isAnnotationPresent(OwnerOnly.class)) {
+
+        Method ownerOnlyMethod = getOwnerOnlyAnnotation(method, mainCommandMethod);
+        if (ownerOnlyMethod != null) {
             if (!OwnersRegistry.isOwner(event.getUser().getIdLong())) {
-                MessageEmbed embed = new EmbedBuilder()
-                .setTitle("Access error")
-                .setDescription("You cannot use this command.")
-                .setFooter("This command is for the owner only.")
-                .setColor(Color.RED)
-                .build();
-                event.replyEmbeds(embed).setEphemeral(true).queue();
+                replyAccessErrorEmbed(event, ownerOnlyMethod);
                 return;
             }
         }
